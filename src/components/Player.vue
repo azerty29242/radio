@@ -1,23 +1,24 @@
 <template>
-    <div class="shadow-md rounded-t-md border w-full h-16 flex divide-x">
-        <div class="flex gap-4 py-2 px-4 items-center">
-            <button class="w-12 h-12 rounded-full">
+    <div class="shadow-md rounded-t-md border h-16 flex divide-x bg-white">
+        <div class="flex py-2 px-4 items-center">
+            <div v-if="loading" class="w-10 h-10 border-4 rounded-full border-t-blue-500 animate-spin"></div>
+            <button v-if="!playing && !loading" class="w-12 h-12 rounded-full">
                 <PlayCircleIcon class="text-blue-500"></PlayCircleIcon>
             </button>
+            <button v-if="playing && !loading" class="w-12 h-12 rounded-full">
+                <StopCircleIcon class="text-blue-500"></StopCircleIcon>
+            </button>
         </div>
-        <div class="flex gap-4 grow py-2 items-center">
-            <div class="flex grow items-center ms-4">
+        <div class="flex gap-2 grow py-2 px-4 items-center">
+            <div class="flex grow items-center mx-4">
                 <p>00:00</p>
                 <div class="grow border-2 shadow-md rounded-full mx-4 h-4 flex justify-start items-center">
-                    <div class="w-[25%] h-4 bg-blue-500 rounded-full"></div>
+                    <div class="h-4 bg-blue-500 rounded-full w-1/4"></div>
                 </div>
                 <p>00:00</p>
             </div>
             <button>
-                <SpeakerWaveIcon class="w-8 h-8 hidden md:block"></SpeakerWaveIcon>
-            </button>
-            <button>
-                <EllipsisVerticalIcon class="w-8 h-8 hidden sm:block"></EllipsisVerticalIcon>
+                <SpeakerWaveIcon class="w-8 h-8 hidden md:block text-blue-500"></SpeakerWaveIcon>
             </button>
         </div>
     </div>
@@ -28,8 +29,7 @@ import {
     PlayCircleIcon,
     StopCircleIcon,
     SpeakerWaveIcon,
-    SpeakerXMarkIcon,
-    EllipsisVerticalIcon
+    SpeakerXMarkIcon
 } from "@heroicons/vue/24/solid";
 
 export default {
@@ -37,8 +37,24 @@ export default {
         PlayCircleIcon: PlayCircleIcon,
         StopCircleIcon: StopCircleIcon,
         SpeakerWaveIcon: SpeakerWaveIcon,
-        SpeakerXMarkIcon: SpeakerXMarkIcon,
-        EllipsisVerticalIcon: EllipsisVerticalIcon
+        SpeakerXMarkIcon: SpeakerXMarkIcon
+    },
+    data() {
+        return {
+            playing: false,
+            loading: true
+        };
+    },
+    props: {
+        radio: Object
+    },
+    watch: {
+        radio: {
+            immediate: true, 
+            async handler (radio) {
+                console.log(await radio.streamInfos())
+            }
+        }
     }
 }
 </script>
