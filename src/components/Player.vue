@@ -2,10 +2,10 @@
     <div class="shadow-md rounded-t-md border h-16 flex divide-x bg-white">
         <div class="flex py-2 px-4 items-center">
             <div v-if="loading" class="w-10 h-10 border-4 rounded-full border-t-blue-500 animate-spin"></div>
-            <button v-if="!playing && !loading" class="w-12 h-12 rounded-full">
+            <button v-if="!playing && !loading" class="w-12 h-12 rounded-full" @click="play()">
                 <PlayCircleIcon class="text-blue-500"></PlayCircleIcon>
             </button>
-            <button v-if="playing && !loading" class="w-12 h-12 rounded-full">
+            <button v-if="playing && !loading" class="w-12 h-12 rounded-full" @click="stop()">
                 <StopCircleIcon class="text-blue-500"></StopCircleIcon>
             </button>
         </div>
@@ -25,6 +25,7 @@
 </template>
 
 <script>
+import Hls from "hls.js"
 import {
     PlayCircleIcon,
     StopCircleIcon,
@@ -42,17 +43,52 @@ export default {
     data() {
         return {
             playing: false,
-            loading: true
+            loading: true,
+            audio: new Audio(),
+            hls: new Hls()
         };
     },
     props: {
         radio: Object
     },
+    methods: {
+        play() {
+            this.loading = true
+            this.hls.destroy()
+            this.hls = new Hls()
+            let stream = this.radio.stream
+            this.hls.loadSource(stream)
+            this.hls.attachMedia(this.audio)
+            this.hls.on(Hls.Events.MANIFEST_PARSED, () => {
+                this.loading = false
+                this.playing = true
+                this.audio.play()
+            })
+        },
+        stop() {
+            this.playing = false
+            this.audio.pause()
+            this.hls.destroy()
+        }
+    },
     watch: {
         radio: {
-            immediate: true, 
-            async handler (radio) {
-                console.log(await radio.streamInfos())
+            immediate: true,
+            handler (radio) {
+                this.loading = true
+                this.playing = false
+                this.hls.destroy()
+                this.hls = new Hls()
+                this.hls.loadSource(radio.stream)
+                this.hls.attachMedia(this.audio)
+                this.hls.on(Hls.Events.MANIFEST_PARSED, () => {
+                    this.loading = false
+                    this.playing = true
+                    this.audio.play()
+                });
+                this.hls.on(Hls.ErrorDetails.LEVEL_LOAD_ERROR, () => {
+                    console.log('Error loading level');
+                })
             }
         }
     }

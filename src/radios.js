@@ -1,5 +1,7 @@
 import rtlLogo from "./assets/rtl.png"
 import fipLogo from "./assets/fip.png"
+import fipgrooveLogo from "./assets/fipgroove.png"
+import fipreggaeLogo from "./assets/fipreggae.png"
 
 function uuid() {
     return ([1e7]+-1e3+-4e3+-8e3+-1e11).replace(/[018]/g, c =>
@@ -7,49 +9,28 @@ function uuid() {
     );
 }
 
-function get(url) {
-    url = "https://thingproxy.freeboard.io/fetch/" + encodeURIComponent(url)
-    var xhr = new XMLHttpRequest()
-    if ("withCredentials" in xhr){
-        xhr.open("GET", url, true)
-    } else if (typeof XDomainRequest != "undefined"){
-        xhr = new XDomainRequest()
-        xhr.open("GET", url)
-    } else {
-        xhr = null;
-    }
-    xhr.responseType = "json"
-    return new Promise((resolve) => {
-        xhr.onload = () => resolve(xhr.response)
-        xhr.send()
-    })
-}
-
 let rtlInfos = {
     name: "RTL",
     logo: rtlLogo,
-    streamInfos: async function () {
-        let data = await get("https://www.rtl.fr/ws/live/live")
-        return {
-            url: data.audio.path,
-            type: "application/vnd.apple.mpegurl"
-        }
-    },
-    programInfos: async function () {
-        let data = await get("https://www.rtl.fr/ws/live/live")
-        return {
-            title: data.title,
-            author: data.hosts,
-            description: data.summary,
-            cover: data.cover2x,
-    
-        }
-    }
+    stream: "https://live.m6radio.quortex.io/webpHJPXnXrN7B6J7Q8mcqmxP/grouprtl/national/long/index.m3u8"
 }
 
 let fipInfos = {
     name: "Fip",
     logo: fipLogo,
+    stream: "https://stream.radiofrance.fr/fip/fip_lofi.m3u8"
+}
+
+let fipgrooveInfos = {
+    name: "Fip Groove",
+    logo: fipgrooveLogo,
+    stream: "https://stream.radiofrance.fr/fipgroove/fipgroove_lofi.m3u8"
+}
+
+let fipreggaeInfos = {
+    name: "Fip Reggae",
+    logo: fipreggaeLogo,
+    stream: "https://stream.radiofrance.fr/fipreggae/fipreggae_lofi.m3u8"
 }
 
 class Radio {
@@ -57,14 +38,15 @@ class Radio {
         this.id = uuid()
         this.name = namespace.name
         this.logo = namespace.logo
-        this.streamInfos = namespace.streamInfos
-        this.programInfos = namespace.programInfos
+        this.stream = namespace.stream
     }
 }
 
 let rtl = new Radio(rtlInfos)
 let fip = new Radio(fipInfos)
+let fipgroove = new Radio(fipgrooveInfos)
+let fipreggae = new Radio(fipreggaeInfos)
 
-let radios = [ rtl, fip ]
+let radios = [ rtl, fip, fipgroove, fipreggae ]
 
 export default radios
