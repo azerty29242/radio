@@ -74,7 +74,10 @@ export default {
     watch: {
         radio: {
             immediate: true,
-            handler (radio) {
+            async handler (radio) {
+                let response = await fetch("https://www.rtl.fr/ws/live/live")
+                let data = await response.json()
+                console.log(data)
                 this.loading = true
                 this.playing = false
                 this.hls.destroy()
