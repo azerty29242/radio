@@ -75,23 +75,32 @@ export default {
         radio: {
             immediate: true,
             async handler (radio) {
-                let response = await fetch("https://www.rtl.fr/ws/live/live")
-                let data = await response.json()
-                console.log(data)
-                this.loading = true
-                this.playing = false
-                this.hls.destroy()
-                this.hls = new Hls()
-                this.hls.loadSource(radio.stream)
-                this.hls.attachMedia(this.audio)
-                this.hls.on(Hls.Events.MANIFEST_PARSED, () => {
+                // let response = await fetch("https://api.allorigins.win/get?url=" + encodeURIComponent("https://rtl.fr/ws/live/live"))
+                // let data = await response.json()
+                // console.log(data.contents)
+                if (Hls.isSupported()) {
+                    this.loading = true
+                    this.playing = false
+                    this.hls.destroy()
+                    this.hls = new Hls()
+                    this.hls.loadSource(radio.stream)
+                    this.hls.attachMedia(this.audio)
+                    this.hls.on(Hls.Events.MANIFEST_PARSED, () => {
+                        this.loading = false
+                        this.playing = true
+                        this.audio.play()
+                    });
+                    this.hls.on(Hls.ErrorDetails.LEVEL_LOAD_ERROR, () => {
+                        console.log('Error loading level');
+                    })
+                } else if (this.audio.canPlayType("application/vnd.apple.mpegurl")) {
+                    this.loading = true
+                    this.playing = false
+                    this.audio.src = radio.stream
+                    this.audio.play();
                     this.loading = false
                     this.playing = true
-                    this.audio.play()
-                });
-                this.hls.on(Hls.ErrorDetails.LEVEL_LOAD_ERROR, () => {
-                    console.log('Error loading level');
-                })
+                }
             }
         }
     }
