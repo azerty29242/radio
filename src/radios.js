@@ -12,25 +12,29 @@ function uuid() {
 let rtlInfos = {
     name: "RTL",
     logo: rtlLogo,
-    stream: "https://live.m6radio.quortex.io/webpHJPXnXrN7B6J7Q8mcqmxP/grouprtl/national/long/index.m3u8"
+    stream: "https://live.m6radio.quortex.io/webpHJPXnXrN7B6J7Q8mcqmxP/grouprtl/national/long/index.m3u8",
+    api: null
 }
 
 let fipInfos = {
     name: "Fip",
     logo: fipLogo,
-    stream: "https://stream.radiofrance.fr/fip/fip_lofi.m3u8"
+    stream: "https://stream.radiofrance.fr/fip/fip_lofi.m3u8",
+    api: "https://www.radiofrance.fr/fip/api/live/webradios/fip"
 }
 
 let fipgrooveInfos = {
     name: "Fip Groove",
     logo: fipgrooveLogo,
-    stream: "https://stream.radiofrance.fr/fipgroove/fipgroove_lofi.m3u8"
+    stream: "https://stream.radiofrance.fr/fipgroove/fipgroove_lofi.m3u8",
+    api: "https://www.radiofrance.fr/fip/api/live/webradios/fip_groove"
 }
 
 let fipreggaeInfos = {
     name: "Fip Reggae",
     logo: fipreggaeLogo,
-    stream: "https://stream.radiofrance.fr/fipreggae/fipreggae_lofi.m3u8"
+    stream: "https://stream.radiofrance.fr/fipreggae/fipreggae_lofi.m3u8",
+    api: "https://www.radiofrance.fr/fip/api/live/webradios/fip_reggae"
 }
 
 class Radio {
@@ -39,6 +43,7 @@ class Radio {
         this.name = namespace.name
         this.logo = namespace.logo
         this.stream = namespace.stream
+        this.api = namespace.api
     }
 }
 
